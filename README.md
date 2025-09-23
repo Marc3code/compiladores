@@ -32,4 +32,4 @@ gcc -v
 
 Se os comandos retornarem as versões do Nim e do GCC, a instalação está correta.
 
-Após a instalação é só criar um arquivo .nim e rodar: echo "hello, world!", na IDE de sua preferência.
+Após a instalação é só criar um arquivo .nim e rodar: echo "hello, world!" na IDE de sua preferência.
