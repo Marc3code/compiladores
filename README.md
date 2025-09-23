@@ -1,4 +1,5 @@
-#Instruções
+Instruções
+
 Como Rodar Nim no Windows (com MSYS2)
 
 Para rodar programas em Nim na sua máquina usando MSYS2, siga os passos abaixo:
