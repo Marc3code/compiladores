@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JFLAP file generated to implement the AFN (Thompson-style) for the currency format described.
+     Notes:
+     - Transitions use character classes like [A-Za-z] and [0-9] to simplify the diagram.
+     - Empty <read/> elements represent ε-transitions.
+     - Open this file in JFLAP (https://www.jflap.org/) and use "Input -> Multiple Input" to test strings.
+-->
+<structure>
+  <type>fa</type>
+  <automaton>
+    <!-- states -->
+    <state id="0" name="q0">
+      <x>60.0</x>
+      <y>64.0</y>
+      <initial/>
+    </state>
+
+    <!-- SYMBOL branch: $ -->
+    <state id="1" name="q1"><x>180.0</x><y>20.0</y></state>
+    <state id="2" name="q2"><x>240.0</x><y>20.0</y></state>
+
+    <!-- SYMBOL branch: letters -->
+    <state id="3" name="q3"><x>180.0</x><y>120.0</y></state>
+    <state id="4" name="q4"><x>240.0</x><y>120.0</y></state>
+    <state id="5" name="q5"><x>300.0</x><y>120.0</y></state>
+
+    <!-- SYMBOL end / entry to number -->
+    <state id="10" name="q10"><x>420.0</x><y>70.0</y></state>
+
+    <!-- Number sign/paren/number start choices -->
+    <state id="11" name="q11"><x>540.0</x><y>20.0</y></state>
+    <state id="12" name="q12"><x>540.0</x><y>70.0</y></state>
+    <state id="13" name="q13"><x>540.0</x><y>120.0</y></state>
+
+    <!-- INT branches -->
+    <!-- INT_ZERO -->
+    <state id="20" name="q20"><x>660.0</x><y>20.0</y></state>
+    <state id="21" name="q21"><x>720.0</x><y>20.0</y></state>
+
+    <!-- INT_SIMPLE [1-9]\d{0,2} -->
+    <state id="22" name="q22"><x>660.0</x><y>120.0</y></state>
+    <state id="23" name="q23"><x>720.0</x><y>120.0</y></state>
+    <state id="24" name="q24"><x>780.0</x><y>120.0</y></state>
+
+    <!-- INT_GROUPED [1-9]\d?(\.\d{3})+ -->
+    <state id="30" name="q30"><x>660.0</x><y>220.0</y></state>
+    <state id="31" name="q31"><x>720.0</x><y>220.0</y></state>
+    <state id="32" name="q32"><x>780.0</x><y>220.0</y></state>
+    <state id="33" name="q33"><x>840.0</x><y>220.0</y></state>
+
+    <!-- decimal part -->
+    <state id="40" name="q40"><x>900.0</x><y>70.0</y></state>
+    <state id="41" name="q41"><x>960.0</x><y>70.0</y></state>
+    <state id="42" name="q42"><x>1020.0</x><y>70.0</y></state>
+
+    <!-- paren close and final -->
+    <state id="50" name="q50"><x>1080.0</x><y>70.0</y></state>
+    <state id="19" name="q19"><x>1140.0</x><y>70.0</y><final/></state>
+
+    <!-- transitions -->
+    <!-- from initial to symbol branches -->
+    <transition><from>0</from><to>1</to><read/></transition>
+    <transition><from>0</from><to>3</to><read/></transition>
+
+    <!-- $ branch -->
+    <transition><from>1</from><to>2</to><read>$</read></transition>
+    <transition><from>2</from><to>10</to><read/></transition>
+
+    <!-- letters branch: at least one letter, loop, optional $ -->
+    <transition><from>3</from><to>4</to><read>[A-Za-z]</read></transition>
+    <transition><from>4</from><to>5</to><read/></transition>
+    <transition><from>5</from><to>5</to><read>[A-Za-z]</read></transition>
+    <!-- optional $ from letters -->
+    <transition><from>5</from><to>10</to><read/></transition>
+    <transition><from>5</from><to>10</to><read>$</read></transition>
+
+    <!-- entry to number choices (after SYMBOL) -->
+    <transition><from>10</from><to>11</to><read>-</read></transition>
+    <transition><from>10</from><to>12</to><read>(</read></transition>
+    <transition><from>10</from><to>13</to><read>[0-9]</read></transition>
+
+    <!-- minus branch: after '-' must go to number start (we use epsilon to forward) -->
+    <transition><from>11</from><to>13</to><read/></transition>
+
+    <!-- paren branch: go to number start and require closing later -->
+    <transition><from>12</from><to>13</to><read/></transition>
+
+    <!-- INT_ZERO: if digit 0 and it is alone before comma -->
+    <transition><from>13</from><to>20</to><read>0</read></transition>
+    <transition><from>20</from><to>21</to><read/></transition>
+    <!-- after zero must have comma -->
+    <transition><from>21</from><to>40</to><read>,</read></transition>
+
+    <!-- INT_SIMPLE: first digit [1-9] -->
+    <transition><from>13</from><to>22</to><read>[1-9]</read></transition>
+    <!-- optional further digits (up to 2) -->
+    <transition><from>22</from><to>23</to><read>[0-9]</read></transition>
+    <transition><from>23</from><to>24</to><read>[0-9]</read></transition>
+
+    <!-- from any of INT_SIMPLE states, can go to comma (decimal) or to dot (group) if allowed -->
+    <transition><from>22</from><to>40</to><read>,</read></transition>
+    <transition><from>23</from><to>40</to><read>,</read></transition>
+    <transition><from>24</from><to>40</to><read>,</read></transition>
+
+    <!-- allow dot only when appropriate: from 22 or 23 (leftmost 1-2 digits) -->
+    <transition><from>22</from><to>30</to><read>.</read></transition>
+    <transition><from>23</from><to>30</to><read>.</read></transition>
+
+    <!-- INT_GROUPED: after '.' must read exactly 3 digits per group -->
+    <transition><from>30</from><to>31</to><read>[0-9]</read></transition>
+    <transition><from>31</from><to>32</to><read>[0-9]</read></transition>
+    <transition><from>32</from><to>33</to><read>[0-9]</read></transition>
+    <!-- after finishing a .DDD group, either loop another .DDD or go to comma -->
+    <transition><from>33</from><to>30</to><read>.</read></transition>
+    <transition><from>33</from><to>40</to><read>,</read></transition>
+
+    <!-- DECIMAL: comma then at least two digits, allow more digits -->
+    <transition><from>40</from><to>41</to><read>[0-9]</read></transition>
+    <transition><from>41</from><to>42</to><read>[0-9]</read></transition>
+    <transition><from>42</from><to>42</to><read>[0-9]</read></transition>
+
+    <!-- after decimal end: if we came from paren branch, expect ')' before final -->
+    <transition><from>42</from><to>50</to><read/></transition>
+    <!-- closing paren path: only valid if started with '(' (we used epsilon from 12 to 13, we need to ensure ')' exists) -->
+    <transition><from>50</from><to>19</to><read>)</read></transition>
+
+    <!-- direct final (no paren): go to final from 42 via epsilon -->
+    <transition><from>42</from><to>19</to><read/></transition>
+
+  </automaton>
+</structure>
