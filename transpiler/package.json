@@ -1,0 +1,25 @@
+{
+  "name": "transpiler",
+  "version": "1.0.0",
+  "description": "Transpilador: nim -> typescript",
+  "main": "",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "tsc",
+    "parser": "ts-node src/runParser.ts",
+    "parse1": "ts-node src/runParser.ts examples/input/teste1.nim",
+    "parse2": "ts-node src/runParser.ts examples/input/teste2.nim"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
